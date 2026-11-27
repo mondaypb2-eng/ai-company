@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Company</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Mitr:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#fffaf0,#14161f);--ink:light-dark(#1d1b26,#f1efe8);--mute:light-dark(#5d5866,#a9a6b4);--wall:light-dark(#2f5fd0,#1d2a55);--wall2:light-dark(#3a6ee0,#24346a);--floor:light-dark(#e3a95c,#5a4330);--floor2:light-dark(#d39549,#4b3727);--coral:#ff5a4e;--card:light-dark(#ffffff,#1d2030);--line:light-dark(#e6dccb,#2e3246);--ok:#1fa35b}
+*{box-sizing:border-box;min-width:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif;margin:0;overflow-x:clip}
+.band{padding:clamp(16px,2.5vw,28px) max(4vw,16px)}
+.wrap{max-width:1320px;margin:0 auto}
+.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:24px;align-items:end}
+h1{font:600 clamp(30px,4vw,46px)/1.08 Mitr,sans-serif;margin:0}
+.sub{color:var(--mute);margin:6px 0 0}
+form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+textarea{font:16px/1.45 inherit;font-family:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 12px;resize:vertical;min-height:84px}
+.btns{display:grid;gap:8px;align-content:start}
+button{font:600 16px Mitr,sans-serif;border:0;border-radius:12px;padding:10px 18px;min-height:44px;cursor:pointer;white-space:nowrap}
+.go{background:var(--coral);color:#fff;box-shadow:0 3px 0 #c73a30}.go:disabled{opacity:.5;cursor:default}
+.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}.ghost:disabled{opacity:.5}
+.opts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--mute);font-size:14px;align-items:center}
+select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 6px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 12px;font:500 14px "IBM Plex Sans Thai";min-height:32px}
+.scene{position:relative;aspect-ratio:16/9;overflow:hidden;background:#3b5dc9;border:4px solid #1d1b26;box-shadow:6px 6px 0 rgba(0,0,0,.25);image-rendering:pixelated}
+.scene canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.pbub{position:absolute;transform:translateX(-50%);width:clamp(96px,18%,220px);background:#fff;color:#1d1b26;padding:5px 8px;font-size:13px;line-height:1.35;border:3px solid #1d1b26;box-shadow:3px 3px 0 rgba(0,0,0,.3);transition:opacity .25s;pointer-events:none}
+.pbub::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-3px;width:6px;height:6px;background:#fff;border-right:3px solid #1d1b26;border-bottom:3px solid #1d1b26;box-shadow:3px 3px 0 rgba(0,0,0,.15)}
+.pbub b{display:block;font:500 12px Mitr,sans-serif;color:#2f5fd0}
+.pbub p{margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.pbub.off,.pbub.walking{opacity:0}.pbub.on{border-color:#ff5a4e}.pbub.on::after{border-color:#ff5a4e}
+h1{font-family:"Press Start 2P",Mitr,monospace!important;font-size:clamp(22px,3vw,34px)!important;line-height:1.3!important;letter-spacing:0}
+.bub{position:absolute;transform:translateX(-50%);width:19%;background:#fff;color:#1d1b26;border-radius:14px;padding:7px 10px;font-size:13px;line-height:1.35;box-shadow:0 2px 0 rgba(0,0,0,.18);transition:opacity .25s}
+.bub::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-bottom:0;border-top-color:#fff}
+.bub b{display:block;font:500 13px Mitr,sans-serif;color:#2f5fd0}
+.bub p{margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.bub.off{opacity:0}.bub.on{outline:3px solid var(--coral)}
+.status{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:center;margin-top:12px;font-size:15px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--mute);display:inline-block;margin-right:6px}
+.run .dot{background:var(--coral);animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.3}}
+.meta{color:var(--mute);font-size:14px;white-space:nowrap}
+.grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.panel h2{font:500 20px Mitr,sans-serif;margin:0 0 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:12px;max-height:620px;overflow:auto}
+.log li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font:500 15px Mitr,sans-serif}
+.who{font-weight:600}.who small{color:var(--mute);font-weight:400;margin-left:6px}
+.log p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}
+.log .tool p{color:var(--mute);font-size:13px;font-family:ui-monospace,Consolas,monospace}
+.log .sys{grid-template-columns:minmax(0,1fr);background:light-dark(#eef3ff,#1f2846);border-radius:10px;padding:8px 12px;font-size:15px}
+.log .sys.bad{background:light-dark(#ffecea,#3a1f1f)}.log .sys.good{background:light-dark(#e6f7ee,#173426)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.tabs button{font:500 15px Mitr,sans-serif;background:transparent;color:var(--mute);border:2px solid var(--line);padding:6px 14px;min-height:38px}
+.tabs button[aria-selected=true]{background:var(--wall);color:#fff;border-color:var(--wall)}
+.files{display:grid;grid-template-columns:minmax(150px,.4fr) minmax(0,1fr);gap:12px}
+.flist{list-style:none;margin:0;padding:0;max-height:560px;overflow:auto;font-size:14px}
+.flist button{all:unset;cursor:pointer;display:block;padding:4px 8px;border-radius:6px;overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.flist button:hover,.flist button.sel{background:light-dark(#eef3ff,#26305a)}
+pre{margin:0;background:light-dark(#f6f1e6,#121420);border-radius:12px;padding:12px;font:13px/1.5 ui-monospace,Consolas,monospace;max-height:560px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+iframe{width:100%;height:560px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.empty{color:var(--mute)}
+.bob{animation:bob .6s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom}@keyframes bob{50%{transform:translateY(-6px)}}
+.glow{animation:glow 1s infinite}@keyframes glow{50%{opacity:.35}}
+#paper{transition:transform 1s cubic-bezier(.5,0,.3,1)}
+@media(prefers-reduced-motion:reduce){.bob,.glow,.run .dot{animation:none}}
+@media(max-width:900px){.top,.grid3{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.pbub{width:30%;font-size:12px;padding:3px 5px}.pbub p{-webkit-line-clamp:1}.files{grid-template-columns:minmax(0,1fr)}form{grid-template-columns:minmax(0,1fr)}}
+</style></head><body>
+<section class="band"><div class="wrap top">
+  <div><h1>AI Company</h1><p class="sub">บริษัทเอเจนต์ Claude ที่เขียนโค้ดจริงลงเครื่องคุณ รันเทสต์จริง และให้ QA ตรวจวนรอบจนผ่าน</p></div>
+  <form id="f">
+    <textarea id="brief" aria-label="โจทย์งาน" placeholder="เล่าว่าอยากได้โปรแกรมอะไร"></textarea>
+    <div class="btns"><button class="go" id="go" type="submit">เริ่มงาน</button><button class="ghost" id="stop" type="button" disabled>หยุด</button></div>
+    <div class="opts">
+      <span>ไอเดีย:</span>
+      <button type="button" class="chip" data-b="เว็บแอปจดรายรับรายจ่ายรายวัน มีกราฟสรุปรายเดือน บันทึกข้อมูลไว้ในเบราว์เซอร์ เปิดไฟล์ index.html ได้เลย">แอปรายจ่าย</button>
+      <button type="button" class="chip" data-b="REST API จัดการรายการสิ่งที่ต้องทำ (todo) ด้วย Python ล้วน เก็บข้อมูลใน SQLite มี endpoint CRUD และหน้าเว็บเล็กๆ ให้ใช้งาน">Todo API</button>
+      <button type="button" class="chip" data-b="เกมงูบนเว็บ เล่นด้วยปุ่มลูกศรและปัดจอบนมือถือ มีคะแนนสูงสุด ความเร็วเพิ่มขึ้นตามคะแนน">เกมงู</button>
+      <button type="button" class="chip" data-b="โปรแกรม command line ภาษา Python สำหรับจัดระเบียบไฟล์ในโฟลเดอร์ตามชนิดไฟล์ มีโหมดทดลอง (dry-run) และ undo">CLI จัดไฟล์</button>
+      <label>ตรวจสูงสุด <select id="rounds"><option>2</option><option>3</option><option selected>4</option><option>6</option></select> รอบ</label>
+      <label><input type="checkbox" id="change"> สั่งงานเพิ่มในโปรเจกต์ที่เลือกอยู่ (<span id="chname">-</span>)</label>
+      <label>ทีม <select id="preset"><option value="balanced">สมดุล (Opus เขียนโค้ด/ตรวจ)</option><option value="opus">Opus ทุกคน</option><option value="sonnet">Sonnet ทุกคน (ประหยัด)</option></select></label>
+    </div>
+  </form>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap">
+  <div class="scene" id="scene"></div>
+  <div class="status" id="status"><span><span class="dot"></span><span id="stxt">พร้อมรับงาน</span></span>
+    <span class="meta" id="mproj"></span><span class="meta" id="mcost"></span><span class="meta" id="mquota"></span><button type="button" class="chip" id="demo" style="margin-left:auto">ดูเดโมแอนิเมชัน</button></div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap grid3">
+  <div class="panel"><h2>ห้องแชททีม <label class="meta"><input type="checkbox" id="showtools" checked> แสดงการกระทำ</label></h2><ul class="log" id="log"><li class="sys"><span>ยังไม่มีงาน พิมพ์โจทย์ด้านบนแล้วกด "เริ่มงาน"</span></li></ul></div>
+  <div class="panel">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-t="files" aria-selected="true">ไฟล์ในโปรเจกต์</button>
+      <button role="tab" data-t="preview" aria-selected="false">ดูผลงาน</button>
+      <select id="plist" aria-label="เลือกโปรเจกต์" style="margin-left:auto"></select>
+      <button type="button" class="ghost" id="openf">เปิดโฟลเดอร์</button>
+    </div>
+    <div id="out"></div>
+  </div>
+</div></section>
+<script src="/pixel-office.js"></script>
+<script>
+{
+const AG=[
+ {id:'ceo',name:'บอสใหญ่',role:'CEO',x:110,c:'#ff5a4e',hair:'#2b1d16',skin:'#f2c29b'},
+ {id:'pm',name:'พี่แพม',role:'Project Manager',x:305,c:'#8a4fd8',hair:'#5a2e1a',skin:'#e8b48a'},
+ {id:'des',name:'น้องดีไซน์',role:'Architect',x:500,c:'#f29e1f',hair:'#1b1b1b',skin:'#f6d0ae'},
+ {id:'eng',name:'เอ็นจิเนียร์บอม',role:'Engineer',x:695,c:'#1fa35b',hair:'#30221a',skin:'#d9a273'},
+ {id:'qa',name:'คิวเอ้',role:'QA Lead',x:890,c:'#1c8fd6',hair:'#6b3b1f',skin:'#f0c4a0'}];
+const by=Object.fromEntries(AG.map(a=>[a.id,a]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);
+
+const office=PixelOffice.mount($('scene'),AG);
+const LOADED=Date.now()/1000;let lastActive=null;
+const live=ev=>ev.t>LOADED-2;
+function toolKind(t){return /^รัน/.test(t)?'run':/^(เขียน|แก้)/.test(t)?'type':'read'}
+function addLog(html,cls){const li=document.createElement('li');if(cls)li.className=cls;li.innerHTML=html;$('log').append(li);const L=$('log');if(L.scrollHeight-L.scrollTop-L.clientHeight<300)L.scrollTop=1e9;return li}
+function agentLog(id,text,tool){const a=by[id];const li=addLog(`<div class="av" style="background:${a.c}">${esc(a.role[0])}</div><div><div class="who">${esc(a.name)}<small>${esc(a.role)}</small></div><p></p></div>`,tool?'tool':'');li.querySelector('p').textContent=text;if(tool)li.hidden=!$('showtools').checked}
+function sys(text,kind){addLog('<span></span>','sys '+(kind||'')).firstChild.textContent=text}
+$('showtools').onchange=e=>document.querySelectorAll('.log .tool').forEach(li=>li.hidden=!e.target.checked);
+function status(t,run){$('stxt').textContent=t;$('status').classList.toggle('run',!!run)}
+
+let cur=null,running=false,tab='files',files=[],selFile=null;
+function setRunning(r){running=r;$('go').disabled=r;$('stop').disabled=!r}
+function handle(ev){
+  switch(ev.type){
+   case 'start':$('log').innerHTML='';office.reset();lastActive=null;cur=ev.project;files=[];selFile=null;$('mproj').textContent='โฟลเดอร์: projects/'+ev.project;$('mcost').textContent='';
+     sys((ev.change?'สั่งงานเพิ่ม: ':'รับงานใหม่: ')+ev.brief);$('change').checked=false;office.board({stage:'รับบรีฟ'});setRunning(true);status('ทีมเริ่มทำงาน',1);loadProjects();break;
+   case 'agent':if(ev.state==='working'){if(lastActive&&lastActive!==ev.id)office.handoff(lastActive,ev.id,live(ev));lastActive=ev.id;office.work(ev.id);status(by[ev.id].name+' กำลังทำงาน',1)}else office.rest(ev.id);break;
+   case 'say':office.say(ev.id,ev.text);if(ev.text==='กำลังคิด...')office.think(ev.id);break;
+   case 'tool':agentLog(ev.id,ev.text,true);office.tool(ev.id,toolKind(ev.text));break;
+   case 'log':agentLog(ev.id,ev.text);break;
+   case 'board':office.board(ev);break;
+   case 'qa':office.qa(ev.passed,live(ev));sys(`ผลตรวจรอบ ${ev.round}: ${ev.passed?'ผ่าน':'ไม่ผ่าน'} (${ev.score} คะแนน)`+(ev.issues.length&&!ev.passed?'\n- '+ev.issues.join('\n- '):''),ev.passed?'good':'bad');break;
+   case 'files':if(ev.project===cur){files=ev.files;if(tab==='files'&&$('plist').value===cur)renderFiles()}break;
+   case 'cost':$('mcost').textContent='ค่าใช้จ่ายประมาณ $'+ev.usd;break;
+   case 'quota':$('mquota').textContent='โควตา 5 ชม. ใช้ไป '+Math.round(ev.five_hour*100)+'%';break;
+   case 'done':setRunning(false);status(ev.passed?'งานเสร็จและผ่าน QA แล้ว':'จบงานแล้ว แต่ยังไม่ผ่าน QA ทั้งหมด');sys(ev.passed?`ส่งมอบงานแล้ว คะแนน QA ${ev.score}`:`ครบรอบแล้ว คะแนน QA ล่าสุด ${ev.score} ดูรายละเอียดใน .company/QA_REPORT.md`,ev.passed?'good':'bad');office.board({stage:'ส่งมอบแล้ว'});office.done(ev.passed,live(ev));loadProjects(ev.project);break;
+   case 'error':office.done(false,false);setRunning(false);status(ev.text);sys(ev.text,'bad');break;
+  }
+}
+const es=new EventSource('/api/events');es.onmessage=m=>{try{handle(JSON.parse(m.data))}catch(e){console.error(e)}};
+es.onerror=()=>status('ขาดการเชื่อมต่อกับเซิร์ฟเวอร์ (company.py ยังเปิดอยู่ไหม?)');
+
+async function loadProjects(pick){const ps=await fetch('/api/projects').then(r=>r.json()).catch(()=>[]);const sel=$('plist');const v=pick||cur||sel.value||ps[0];
+  sel.innerHTML=ps.length?ps.map(p=>`<option>${esc(p)}</option>`).join(''):'<option value="">ยังไม่มีโปรเจกต์</option>';if(v&&ps.includes(v))sel.value=v;render()}
+$('plist').onchange=()=>{selFile=null;render()};
+$('openf').onclick=()=>$('plist').value&&fetch('/api/open',{method:'POST',body:JSON.stringify({project:$('plist').value})});
+document.querySelectorAll('[role=tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.t;document.querySelectorAll('[role=tab]').forEach(x=>x.setAttribute('aria-selected',x===b));render()});
+async function render(){const p=$('plist').value,o=$('out');$('chname').textContent=p||'-';
+  if(!p){o.innerHTML='<p class="empty">ยังไม่มีโปรเจกต์ เมื่อทีมเริ่มงาน ไฟล์จะขึ้นที่นี่ทันที</p>';return}
+  if(tab==='preview'){const fs=p===cur&&files.length?files:await fetch('/api/files?project='+encodeURIComponent(p)).then(r=>r.json());
+    const html=fs.find(f=>f==='index.html')||fs.find(f=>/(^|\/)index\.html$/.test(f)&&!f.startsWith('.company'))||fs.find(f=>f.endsWith('.html')&&!f.startsWith('qa_tests'));
+    o.innerHTML=html?`<iframe src="/preview/${encodeURIComponent(p)}/${html.split('/').map(encodeURIComponent).join('/')}"></iframe><p class="meta"><a href="/preview/${encodeURIComponent(p)}/${esc(html)}" target="_blank">เปิดในแท็บใหม่</a> · ถ้าเป็นเซิร์ฟเวอร์หรือ CLI ให้ดูวิธีรันใน README.md</p>`:'<p class="empty">โปรเจกต์นี้ไม่มีหน้า HTML ให้พรีวิว ดูวิธีรันใน README.md หรือ .company/RUN.md</p>';return}
+  if(p!==cur||!files.length)files=await fetch('/api/files?project='+encodeURIComponent(p)).then(r=>r.json());
+  renderFiles()}
+async function renderFiles(){const o=$('out'),p=$('plist').value;
+  if(!selFile)selFile=files.includes('README.md')?'README.md':files.includes('.company/SPEC.md')?'.company/SPEC.md':files[0];
+  o.innerHTML=`<div class="files"><ul class="flist">${files.map(f=>`<li><button data-f="${esc(f)}" class="${f===selFile?'sel':''}">${esc(f)}</button></li>`).join('')||'<li class="empty">ยังไม่มีไฟล์</li>'}</ul><pre id="fview"></pre></div>`;
+  o.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{selFile=b.dataset.f;renderFiles()});
+  if(selFile){const t=await fetch(`/api/file?project=${encodeURIComponent(p)}&path=${encodeURIComponent(selFile)}`).then(r=>r.text()).catch(()=>'');const v=$('fview');if(v)v.textContent=t}}
+
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{$('brief').value=c.dataset.b});
+$('f').onsubmit=async e=>{e.preventDefault();const brief=$('brief').value.trim();if(!brief||running)return;
+  const project=$('change').checked?$('plist').value:'';if($('change').checked&&!project){sys('ยังไม่ได้เลือกโปรเจกต์ที่จะสั่งงานเพิ่ม','bad');return}
+  const r=await fetch('/api/start',{method:'POST',body:JSON.stringify({brief,rounds:+$('rounds').value,preset:$('preset').value,project})}).then(r=>r.json()).catch(()=>({error:'ติดต่อเซิร์ฟเวอร์ไม่ได้'}));
+  if(r.error)sys(r.error,'bad')};
+$('stop').onclick=()=>fetch('/api/stop',{method:'POST'});
+
+// demo: plays a scripted run locally (no Claude usage)
+function demo(){if(running)return;const now=()=>Date.now()/1000;const seq=[
+ [0,{type:'start',project:'demo',brief:'(เดโม) แอปจดรายจ่าย'}],
+ [300,{type:'agent',id:'ceo',state:'working'}],[400,{type:'say',id:'ceo',text:'กำลังคิด...'}],
+ [2200,{type:'tool',id:'ceo',text:'เขียนไฟล์ SPEC.md'}],[2300,{type:'say',id:'ceo',text:'เขียนไฟล์ SPEC.md'}],
+ [4200,{type:'agent',id:'ceo',state:'idle'}],[4200,{type:'board',stage:'วางแผน'}],
+ [4300,{type:'agent',id:'pm',state:'working'}],[4400,{type:'say',id:'pm',text:'แบ่งงานเป็น 8 ข้อ'}],[5200,{type:'tool',id:'pm',text:'เขียนไฟล์ TASKS.md'}],
+ [9000,{type:'agent',id:'pm',state:'idle'}],[9100,{type:'agent',id:'des',state:'working'}],[9200,{type:'tool',id:'des',text:'อ่าน SPEC.md'}],[9300,{type:'say',id:'des',text:'ดูสเปกก่อนออกแบบ'}],
+ [11000,{type:'tool',id:'des',text:'เขียนไฟล์ DESIGN.md'}],[14000,{type:'agent',id:'des',state:'idle'}],
+ [14000,{type:'board',stage:'พัฒนา',round:1,max:4,score:0}],[14100,{type:'agent',id:'eng',state:'working'}],
+ [14200,{type:'tool',id:'eng',text:'เขียนไฟล์ index.html'}],[14300,{type:'say',id:'eng',text:'เขียนไฟล์ index.html'}],
+ [17500,{type:'tool',id:'eng',text:'รัน: node tests/logic.test.js'}],[17600,{type:'say',id:'eng',text:'รันเทสต์ 38 ข้อ ผ่านหมด'}],
+ [21000,{type:'agent',id:'eng',state:'idle'}],[21100,{type:'agent',id:'qa',state:'working'}],[21200,{type:'tool',id:'qa',text:'รัน: python -m unittest'}],[21300,{type:'say',id:'qa',text:'ตรวจทีละเกณฑ์...'}],
+ [25000,{type:'agent',id:'qa',state:'idle'}],[25000,{type:'board',stage:'ตรวจงาน',round:1,max:4,score:72}],[25100,{type:'qa',round:1,passed:false,score:72,issues:['ปุ่มลบไม่ทำงาน']}],
+ [27000,{type:'board',stage:'พัฒนา',round:2,max:4,score:72}],[27100,{type:'agent',id:'eng',state:'working'}],[27200,{type:'tool',id:'eng',text:'แก้ไฟล์ index.html'}],[27300,{type:'say',id:'eng',text:'แก้ปุ่มลบตามที่ QA แจ้ง'}],
+ [31000,{type:'agent',id:'eng',state:'idle'}],[31100,{type:'agent',id:'qa',state:'working'}],[31200,{type:'tool',id:'qa',text:'รัน: node qa_tests/e2e.js'}],
+ [35000,{type:'agent',id:'qa',state:'idle'}],[35000,{type:'board',stage:'ตรวจงาน',round:2,max:4,score:95}],[35100,{type:'qa',round:2,passed:true,score:95,issues:[]}],
+ [37000,{type:'agent',id:'ceo',state:'working'}],[37100,{type:'say',id:'ceo',text:'ส่งมอบงานให้ลูกค้า!'}],[40000,{type:'agent',id:'ceo',state:'idle'}],
+ [40100,{type:'done',passed:true,score:95,project:'demo',usd:0}]];
+ seq.forEach(([ms,ev])=>setTimeout(()=>{handle({...ev,t:now()});if(ev.type==='done'){setRunning(false);status('เดโมจบแล้ว (ไม่ได้ใช้โควตา Claude)')}},ms));setRunning(true);setTimeout(()=>setRunning(false),40200)}
+$('demo').onclick=demo;if(location.search.includes('demo'))setTimeout(demo,600);
+fetch('/api/state').then(r=>r.json()).then(s=>{setRunning(s.running);if(s.project)cur=s.project;loadProjects()});
+}
+</script></body></html>
